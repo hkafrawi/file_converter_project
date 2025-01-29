@@ -35,3 +35,15 @@ def file_converter(ds_name, src_base_dir, tgt_base_dir):
         df = read_csv(file, schemas)
         file_name = re.split('[/\\\]', file)[-1]
         to_json(df,tgt_base_dir,ds_name, file_name)
+
+def process_files(ds_names=None,
+                  src_base_dir = "data\\retail_db",
+                    tgt_base_dir = "data\\retail_db_json"):
+    schemas = json.load(open(f"{src_base_dir}\\schemas.json"))
+    if not ds_names:
+        ds_names = schemas.keys()
+    for ds_name in ds_names:
+        print(f"Processing {ds_name}")
+        file_converter(ds_name=ds_name,
+                       src_base_dir=src_base_dir,
+                       tgt_base_dir=tgt_base_dir)

@@ -25,3 +25,13 @@ def to_json(df, tgt_base_dir, ds_name, file_name):
     df.to_json(json_file_path,
                orient='records',
                lines=True)
+
+def file_converter(ds_name, src_base_dir, tgt_base_dir):   
+    schemas = json.load(open(f"{src_base_dir}/schemas.json"))
+    files = glob.glob(f"{src_base_dir}\\{ds_name}\\part-*")
+    print(files)
+
+    for file in files:
+        df = read_csv(file, schemas)
+        file_name = re.split('[/\\\]', file)[-1]
+        to_json(df,tgt_base_dir,ds_name, file_name)

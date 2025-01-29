@@ -31,7 +31,9 @@ def to_json(df, tgt_base_dir, ds_name, file_name):
 def file_converter(ds_name, src_base_dir, tgt_base_dir):   
     schemas = json.load(open(f"{src_base_dir}/schemas.json"))
     files = glob.glob(f"{src_base_dir}\\{ds_name}\\part-*")
-    print(files)
+
+    if len(files) == 0:
+        raise NameError(f"No files found for {ds_name}")
 
     for file in files:
         df = read_csv(file, schemas)
@@ -45,11 +47,15 @@ def process_files(ds_names=None,
     if not ds_names:
         ds_names = schemas.keys()
     for ds_name in ds_names:
-        print(f"Processing {ds_name}")
-        file_converter(ds_name=ds_name,
-                       src_base_dir=src_base_dir,
-                       tgt_base_dir=tgt_base_dir)
-        
+        try:
+            print(f"..Processing {ds_name}")
+            file_converter(ds_name=ds_name,
+                        src_base_dir=src_base_dir,
+                        tgt_base_dir=tgt_base_dir)
+        except NameError as e:
+            print(f"  * Error Processing {ds_name}")
+            pass
+
 if __name__ == "__main__":
     try:
         ds_names = json.loads(sys.argv[1])
